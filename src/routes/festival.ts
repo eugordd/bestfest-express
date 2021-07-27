@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import isAdmin from '../middlewares/isAdmin';
 import {getFestivals, addFestival, getFestival, editFestival, deleteFestival} from '../controllers/festival';
 
 const router = Router();
@@ -8,15 +9,15 @@ const router = Router();
 router.get('/', getFestivals);
 
 // POST /artists
-router.post('/', addFestival);
+router.post('/', isAdmin, addFestival);
 
 // GET /artists/:artistId
 router.get('/:artistId', getFestival);
 
 // PUT /artists/:artistId
-router.put('/:artistId', editFestival);
+router.put('/:artistId', isAdmin, editFestival);
 
 // DELETE /artists/:artistId
-router.delete('/:artistId', deleteFestival);
+router.delete('/:artistId', isAdmin, deleteFestival);
 
 export default router;

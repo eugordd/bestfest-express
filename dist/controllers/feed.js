@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.createPost = exports.getPosts = void 0;
 const getPosts = (req, res, next) => {
     res.status(200).json({
@@ -8,8 +8,8 @@ const getPosts = (req, res, next) => {
 };
 exports.getPosts = getPosts;
 const createPost = (req, res, next) => {
-    const title = req.body.title;
-    const content = req.body.content;
+    const { title } = req.body;
+    const { content } = req.body;
     // Create post in db
     res.status(201).json({
         message: 'Post created successfully',

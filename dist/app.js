@@ -11,12 +11,22 @@ const config_1 = __importDefault(require("./config/config"));
 const artist_1 = __importDefault(require("./routes/artist"));
 const festival_1 = __importDefault(require("./routes/festival"));
 const main_1 = __importDefault(require("./routes/main"));
+const admin_1 = __importDefault(require("./routes/admin"));
+const errorHandler_1 = __importDefault(require("./middlewares/errorHandler"));
 const app = express_1.default();
 app.use(body_parser_1.default.json());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+    next();
+});
 app.use('/artists', artist_1.default);
 app.use('/festivals', festival_1.default);
+app.use('/admin', admin_1.default);
 app.use('/', main_1.default);
+app.use(errorHandler_1.default);
 // DB CONNECT
 const mongoHost = config_1.default.database.host;
 const dbName = config_1.default.database.name;

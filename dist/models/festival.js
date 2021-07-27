@@ -14,7 +14,7 @@ const festivalSchema = new mongoose_1.Schema({
         }],
     artists: [{
             type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Artists'
+            ref: 'Artist'
         }]
 });
 exports.default = mongoose_1.model('Festival', festivalSchema);

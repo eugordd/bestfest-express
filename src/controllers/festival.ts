@@ -28,7 +28,8 @@ export const addFestival = async (req: Request, res: Response, next: NextFunctio
         description: 'Decstiption of test festival',
         genres: ['Rock', 'Pop']
     });
-    await festival.save();
+
+    await festival.save()
     const data = {
         festival: festival._doc
     }

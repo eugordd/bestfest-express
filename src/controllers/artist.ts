@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import Artist from '../models/artist';
+import Artist from "../models/artist";
 
 type ArtistRequestBody = {
     name: string,

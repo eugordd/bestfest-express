@@ -25,13 +25,13 @@ export const getFestivals = async (req: Request, res: Response, next: NextFuncti
 export const addFestival = async (req: Request, res: Response, next: NextFunction) => {
     const festival = new Festival({
         name: 'Test festival',
-        description: 'Decstiption of test festival',
+        description: 'Description of test festival',
         genres: ['Rock', 'Pop']
     });
 
     await festival.save()
     const data = {
-        festival: festival._doc
+        festival: festival
     }
     res.status(200).json(data);
 };

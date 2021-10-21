@@ -34,7 +34,7 @@ export const addArtist = async (req: Request, res: Response, next: NextFunction)
     });
     await artist.save();
     const data = {
-        artist: artist._doc
+        artist: artist
     }
     res.status(200).json(data);
 }

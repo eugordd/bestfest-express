@@ -30,7 +30,7 @@ const addArtist = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     });
     yield artist.save();
     const data = {
-        artist: artist._doc
+        artist: artist
     };
     res.status(200).json(data);
 });
@@ -60,7 +60,10 @@ exports.editArtist = editArtist;
 const deleteArtist = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { artistId } = req.params;
     yield artist_1.default.findByIdAndRemove(artistId);
-    res.status(200);
+    const data = {
+        message: 'Deleted successfully'
+    };
+    res.status(200).json(data);
 });
 exports.deleteArtist = deleteArtist;
 exports.default = { getArtists: exports.getArtists, getArtist: exports.getArtist, addArtist: exports.addArtist, editArtist: exports.editArtist, deleteArtist: exports.deleteArtist };

@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import config from './config/config';
 import artistRoutes from './routes/artist';
 import festivalRoutes from './routes/festival';
+import genreRoues from './routes/genre';
 import mainRoutes from './routes/main';
 import adminRoutes from './routes/admin';
 import errorHandler from "./middlewares/errorHandler";
@@ -25,6 +26,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use('/artists', artistRoutes);
 app.use('/festivals', festivalRoutes);
+app.use('/genres', genreRoues);
 app.use('/admin', adminRoutes);
 app.use('/', mainRoutes);
 

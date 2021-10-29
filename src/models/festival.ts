@@ -9,7 +9,8 @@ const festivalSchema = new Schema({
         type: String,
     },
     genres: [{
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'Genre'
     }],
     artists: [{
         type: Schema.Types.ObjectId,

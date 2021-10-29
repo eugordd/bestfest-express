@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const isAdmin_1 = __importDefault(require("../middlewares/isAdmin"));
 const festival_1 = require("../controllers/festival");
-const router = express_1.Router();
+const router = (0, express_1.Router)();
 // GET /artists
 router.get('/', festival_1.getFestivals);
 // POST /artists

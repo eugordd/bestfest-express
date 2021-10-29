@@ -18,6 +18,13 @@ type LoginRequest = {
 export const adminRegister = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password, name } = req.body as RegisterRequest;
     try {
+        const isExist = await Admin.findOne({ email });
+        if (isExist) {
+            const error: ResponseError = new Error('User already exists');
+            error.code = 409;
+            return next(error);
+        }
+
         const hashedPw = await bcrypt.hash(password, 12);
         const admin = new Admin({
             email,
@@ -25,7 +32,7 @@ export const adminRegister = async (req: Request, res: Response, next: NextFunct
             password: hashedPw
         });
         await admin.save();
-        res.status(201);
+        res.status(201).json();
     } catch (e) {
         next(e);
         return e;

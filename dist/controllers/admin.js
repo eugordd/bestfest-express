@@ -19,6 +19,12 @@ const admin_1 = __importDefault(require("../models/admin"));
 const adminRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, name } = req.body;
     try {
+        const isExist = yield admin_1.default.findOne({ email });
+        if (isExist) {
+            const error = new Error('User already exists');
+            error.code = 409;
+            return next(error);
+        }
         const hashedPw = yield bcryptjs_1.default.hash(password, 12);
         const admin = new admin_1.default({
             email,
@@ -26,7 +32,7 @@ const adminRegister = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             password: hashedPw
         });
         yield admin.save();
-        res.status(201);
+        res.status(201).json();
     }
     catch (e) {
         next(e);

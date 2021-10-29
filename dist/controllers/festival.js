@@ -25,12 +25,12 @@ exports.getFestivals = getFestivals;
 const addFestival = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const festival = new festival_1.default({
         name: 'Test festival',
-        description: 'Decstiption of test festival',
+        description: 'Description of test festival',
         genres: ['Rock', 'Pop']
     });
     yield festival.save();
     const data = {
-        festival: festival._doc
+        festival: festival
     };
     res.status(200).json(data);
 });

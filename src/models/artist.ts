@@ -6,8 +6,9 @@ const artistSchema = new Schema({
         required: true
     },
     genres: [{
-        type: String
-    }]
+        type: Schema.Types.ObjectId,
+        ref: 'Genre'
+    }],
 });
 
 export default model('Artist', artistSchema);

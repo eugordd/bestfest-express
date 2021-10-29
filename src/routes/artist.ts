@@ -15,10 +15,10 @@ router.post('/', isAdmin, addArtist);
 router.get('/:artistId', getArtist);
 
 // PUT /artists/:artistId
-router.post('/', isAdmin, editArtist);
+router.post('/:artistId', isAdmin, editArtist);
 
 // DELETE /artists/:artistId
-router.delete('/', isAdmin, deleteArtist);
+router.delete('/:artistId', isAdmin, deleteArtist);
 
 
 export default router;

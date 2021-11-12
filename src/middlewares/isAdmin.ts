@@ -19,11 +19,11 @@ export default (req: Request, res: Response, next: NextFunction) => {
     try {
         const decodedToken = jwt.verify(token, adminSecret) as tokenObject;
         req.adminId = decodedToken.id;
-        next();
+        console.log('before return admin middleware');
+        return next();
     } catch (e) {
         const error : ResponseError = new Error('Authorization header is not valid');
         error.code = 401;
         throw error;
     }
-
 };

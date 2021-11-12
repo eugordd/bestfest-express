@@ -28,11 +28,12 @@ const addFestival = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         description: 'Description of test festival',
         genres: ['Rock', 'Pop']
     });
+    console.log('before festival.save()');
     yield festival.save();
     const data = {
         festival: festival
     };
-    res.status(200).json(data);
+    return res.status(200).json(data);
 });
 exports.addFestival = addFestival;
 const getFestival = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

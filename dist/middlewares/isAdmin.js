@@ -16,7 +16,8 @@ exports.default = (req, res, next) => {
     try {
         const decodedToken = jsonwebtoken_1.default.verify(token, adminSecret);
         req.adminId = decodedToken.id;
-        next();
+        console.log('before return admin middleware');
+        return next();
     }
     catch (e) {
         const error = new Error('Authorization header is not valid');

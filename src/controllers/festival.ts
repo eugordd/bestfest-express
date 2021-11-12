@@ -29,11 +29,13 @@ export const addFestival = async (req: Request, res: Response, next: NextFunctio
         genres: ['Rock', 'Pop']
     });
 
+    console.log('before festival.save()');
     await festival.save()
+
     const data = {
         festival: festival
     }
-    res.status(200).json(data);
+    return res.status(200).json(data);
 };
 
 export const getFestival = async (req: Request, res: Response, next: NextFunction) => {

@@ -6,6 +6,9 @@ import { getGenres, addGenre, getGenre, editGenre, deleteGenre, deleteGenresList
 
 const router = Router();
 
+// POST /genres/delete
+router.post('/delete-list', isAdmin, deleteGenresList);
+
 // GET /genres
 router.get('/', getGenres);
 
@@ -24,9 +27,6 @@ router.put('/:genreId', isAdmin, editGenre);
 
 // DELETE /genres/:genreId
 router.delete('/:genreId', isAdmin, deleteGenre);
-
-// POST /genres/delete
-router.post('/delete-list', isAdmin, deleteGenresList);
 
 export default router;
 

@@ -17,22 +17,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        console.log('before await');
-        await next()
-        console.log('after await');
-    } catch (err) {
-        console.log('inside error catcher');
-        return res.status(422).json({ message: 'An unexpected error occurred' })
-    }
-})
-
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
-    console.log('before return headers middlware');
     return next();
 })
 
@@ -42,7 +30,7 @@ app.use('/genres', genreRoues);
 app.use('/admin', adminRoutes);
 app.use('/', mainRoutes);
 
-// app.use(errorHandler);
+app.use(errorHandler);
 
 // DB CONNECT
 const mongoHost: string = config.database.host;

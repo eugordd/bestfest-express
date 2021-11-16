@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import isAdmin from '../middlewares/isAdmin';
 import {getFestivals, addFestival, getFestival, editFestival, deleteFestival} from '../controllers/festival';
+import {body} from "express-validator";
 
 const router = Router();
 
@@ -9,7 +10,13 @@ const router = Router();
 router.get('/', getFestivals);
 
 // POST /artists
-router.post('/', isAdmin, addFestival);
+router.post('/',
+    isAdmin,
+    body('name').trim().not().isEmpty(),
+    body('artists').isArray(),
+    body('genres').isArray(),
+    addFestival
+);
 
 // GET /artists/:artistId
 router.get('/:artistId', getFestival);

@@ -22,4 +22,4 @@ const userSchema = new mongoose_1.Schema({
             ref: 'Festival'
         }]
 });
-exports.default = (0, mongoose_1.model)('User', userSchema);
+exports.default = mongoose_1.model('User', userSchema);

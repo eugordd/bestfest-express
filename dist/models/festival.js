@@ -15,6 +15,15 @@ const festivalSchema = new mongoose_1.Schema({
         required: true,
         enum: Object.keys(countries_list_1.countries)
     },
+    place: {
+        type: String
+    },
+    dateStart: {
+        type: Date
+    },
+    dateEnd: {
+        type: Date
+    },
     genres: [{
             type: mongoose_1.Schema.Types.ObjectId,
             ref: 'Genre'
@@ -24,4 +33,4 @@ const festivalSchema = new mongoose_1.Schema({
             ref: 'Artist'
         }]
 });
-exports.default = (0, mongoose_1.model)('Festival', festivalSchema);
+exports.default = mongoose_1.model('Festival', festivalSchema);

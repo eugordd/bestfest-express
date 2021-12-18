@@ -20,4 +20,4 @@ const artistSchema = new mongoose_1.Schema({
             ref: 'Genre'
         }],
 });
-exports.default = (0, mongoose_1.model)('Artist', artistSchema);
+exports.default = mongoose_1.model('Artist', artistSchema);

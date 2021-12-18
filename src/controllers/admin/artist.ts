@@ -1,8 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 
-import Artist from "../models/artist";
+import Artist from '../../models/artist';
+import Genre from '../../models/genre';
+
 import { validationResult } from "express-validator";
-import formatValidationError from "../utils/formatValidationError";
+import formatValidationError from "../../utils/formatValidationError";
+import { countries, continents } from "countries-list";
+import searchByCountry from "../../utils/mongoose/searchByCountry";
+import escapeStringRegexp from "../../utils/escapeRegExp";
 
 type ArtistRequestBody = {
     name: string,
@@ -26,12 +31,46 @@ type Artist = {
 
 export const getArtists = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        // noinspection DuplicatedCode
+        let search = req.query.search as string;
+        if (!search) search = '';
+        search = search.trim().toLowerCase();
+
+        const escapedSearchRegExp = new RegExp(escapeStringRegexp(search), 'i');
+        const searchCountry = {
+            $in: searchByCountry(search)
+        };
+
+        const aggregation = [
+            {
+                $lookup: {
+                    from: Genre.collection.name,
+                    localField: 'genres',
+                    foreignField: '_id',
+                    as: 'genres'
+                }
+            },
+            {
+                $match: {
+                    $or: [
+                        { name: escapedSearchRegExp },
+                        { description: escapedSearchRegExp },
+                        { country: searchCountry },
+                        { 'genres.name': escapedSearchRegExp },
+                        { 'genres.symlinks': { $in: [escapedSearchRegExp] } }
+                    ]
+                }
+            },
+            {
+                $skip: req.skip
+            },
+            {
+                $limit: req.query.limit
+            }
+        ];
+
         const total: number = await Artist.countDocuments();
-        const artists: Array<Artist> = await Artist.find()
-            .limit(req.query.limit)
-            .skip(req.skip)
-            .populate('genres')
-            .lean();
+        const artists: Array<Artist> = await Artist.aggregate(aggregation);
 
         const data = {
             artists,
@@ -46,6 +85,18 @@ export const getArtists = async (req: Request, res: Response, next: NextFunction
         next(e)
     }
 };
+
+export const getArtistsNotDetailed = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const artists = await Artist.find().select('name').lean();
+        const data = {
+            artists
+        };
+        res.status(200).json(data);
+    } catch (e) {
+        next(e);
+    }
+}
 
 export const addArtist = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -74,9 +125,7 @@ export const addArtist = async (req: Request, res: Response, next: NextFunction)
 export const getArtist = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { artistId } = req.params as ArtistRequestParams;
-
         const artist = await Artist.findById(artistId);
-
         const data = {
             artist
         };
@@ -100,7 +149,7 @@ export const editArtist = async (req: Request, res: Response, next: NextFunction
         await artist.save()
 
         const data = {
-            artist: artist._doc
+            artist
         };
         res.status(200).json(data);
     } catch (e) {
@@ -136,4 +185,4 @@ export const deleteArtistsList = async (req: Request, res: Response, next: NextF
     }
 };
 
-export default { getArtists, getArtist, addArtist, editArtist, deleteArtist, deleteArtistsList };
+export default { getArtists, getArtistsNotDetailed, getArtist, addArtist, editArtist, deleteArtist, deleteArtistsList };

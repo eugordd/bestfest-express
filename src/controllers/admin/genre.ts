@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 
-import Genre from '../models/genre';
-import formatValidationError from "../utils/formatValidationError";
+import Genre from '../../models/genre';
+import formatValidationError from "../../utils/formatValidationError";
+import escapeStringRegexp from "../../utils/escapeRegExp";
 
 
 type GenreRequestBody = {
@@ -25,15 +26,52 @@ type Genre = {
 
 export const getGenres = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        let search = req.query.search as string;
+        if (!search) search = '';
+        search = search.trim().toLowerCase();
 
+        const escapedSearch = escapeStringRegexp(search);
+
+        const searchQuery = {
+            $or: [
+                { name: new RegExp(escapedSearch, 'i') },
+                {
+                    symlinks: {
+                        $in: [new RegExp(escapedSearch, 'i')]
+                    }
+                }
+            ]
+        }
+
+        const total: number = await Genre.countDocuments();
+        const genres: Array<Genre> = await Genre.find(searchQuery)
+            .skip(req.skip)
+            .limit(req.query.limit)
+            .lean();
+
+        const data = {
+            genres,
+            pagination: {
+                page: req.query.page,
+                limit: req.query.limit,
+                total
+            }
+        };
+        res.status(200).json(data);
     } catch (e) {
         next(e)
     }
-    const genres: Array<Genre> = await Genre.find();
-    const data = { genres };
-
-    res.status(200).json(data);
 };
+
+export const getGenresNotDetailed = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const genres: Array<Genre> = await Genre.find().select('name');
+        const data = { genres };
+        res.status(200).json(data);
+    } catch (e) {
+        next(e);
+    }
+}
 
 export const addGenre = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -5,11 +5,11 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 
 import config from './config/config';
-import artistRoutes from './routes/artist';
-import festivalRoutes from './routes/festival';
-import genreRoues from './routes/genre';
+import artistRoutes from './routes/admin/artist';
+import festivalRoutes from './routes/admin/festival';
+import genreRoues from './routes/admin/genre';
+import adminRoutes from './routes/admin/auth';
 import mainRoutes from './routes/main';
-import adminRoutes from './routes/admin';
 import errorHandler from "./middlewares/errorHandler";
 
 const app = express();
@@ -24,11 +24,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     return next();
 })
 
-app.use('/artists', artistRoutes);
-app.use('/festivals', festivalRoutes);
-app.use('/genres', genreRoues);
+// admin routes
+app.use('/admin/artists', artistRoutes);
+app.use('/admin/festivals', festivalRoutes);
+app.use('/admin/genres', genreRoues);
 app.use('/admin', adminRoutes);
-app.use('/', mainRoutes);
+
+// app routes
+app.use('/app', mainRoutes);
 
 app.use(errorHandler);
 

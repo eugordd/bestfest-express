@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import Admin from '../models/admin';
+import Admin from '../../models/admin';
 
 type RegisterRequest = {
     email: string,

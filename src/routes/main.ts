@@ -1,10 +1,14 @@
 import { Router } from 'express';
 
-import { findFestivals } from '../controllers/main';
+import { findFestivals, getArtists } from '../controllers/main';
+
 
 const router = Router();
 
 // GET /artists
-router.get('/find-festivals', findFestivals);
+router.get('/artists', getArtists);
+
+// GET /find-festivals
+router.post('/find-festivals', findFestivals);
 
 export default router;

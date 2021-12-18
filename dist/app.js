@@ -8,13 +8,13 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const config_1 = __importDefault(require("./config/config"));
-const artist_1 = __importDefault(require("./routes/artist"));
-const festival_1 = __importDefault(require("./routes/festival"));
-const genre_1 = __importDefault(require("./routes/genre"));
+const artist_1 = __importDefault(require("./routes/admin/artist"));
+const festival_1 = __importDefault(require("./routes/admin/festival"));
+const genre_1 = __importDefault(require("./routes/admin/genre"));
+const auth_1 = __importDefault(require("./routes/admin/auth"));
 const main_1 = __importDefault(require("./routes/main"));
-const admin_1 = __importDefault(require("./routes/admin"));
 const errorHandler_1 = __importDefault(require("./middlewares/errorHandler"));
-const app = (0, express_1.default)();
+const app = express_1.default();
 app.use(body_parser_1.default.json());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use((req, res, next) => {
@@ -23,11 +23,13 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
     return next();
 });
-app.use('/artists', artist_1.default);
-app.use('/festivals', festival_1.default);
-app.use('/genres', genre_1.default);
-app.use('/admin', admin_1.default);
-app.use('/', main_1.default);
+// admin routes
+app.use('/admin/artists', artist_1.default);
+app.use('/admin/festivals', festival_1.default);
+app.use('/admin/genres', genre_1.default);
+app.use('/admin', auth_1.default);
+// app routes
+app.use('/app', main_1.default);
 app.use(errorHandler_1.default);
 // DB CONNECT
 const mongoHost = config_1.default.database.host;

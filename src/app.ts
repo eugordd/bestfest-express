@@ -45,7 +45,7 @@ const dbName: string = config.database.name;
 
 mongoose.connect(`mongodb://${mongoHost}:27017/${dbName}`, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        app.listen(8080, () => {
+        app.listen(3000, () => {
             console.log('Server started successfully!');
         });
     })

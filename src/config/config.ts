@@ -3,7 +3,7 @@ export default {
         port: 3000
     },
     database: {
-        host: 'localhost',
+        host: 'mongo',
         name: 'bestfest-express'
     }
 };

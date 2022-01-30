@@ -35,11 +35,18 @@ app.use('/app', mainRoutes);
 
 app.use(errorHandler);
 
-// DB CONNECT
-const mongoHost: string = config.database.host;
+// app.listen(8080, () => {
+//     console.log('Server started successfully!');
+// });
+
+const isDocker = process.env.DOCKER;
+const mongoHost: string = isDocker ? config.database.host : 'localhost';
 const dbName: string = config.database.name;
+
 mongoose.connect(`mongodb://${mongoHost}:27017/${dbName}`, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        app.listen(8080);
+        app.listen(8080, () => {
+            console.log('Server started successfully!');
+        });
     })
     .catch(err => console.log(err));

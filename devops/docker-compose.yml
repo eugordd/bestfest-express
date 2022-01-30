@@ -1,0 +1,71 @@
+version: "3"
+services:
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    depends_on:
+      - nginx-proxy-letsencrypt
+
+  nginx-proxy-letsencrypt:
+    container_name: nginx-proxy-letsencrypt
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhost.d:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - NGINX_PROXY_CONTAINER=reverse-proxy
+
+  nodejs:
+    image: nodejs
+    container_name: nodejs
+    build: ../
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DOCKER=true
+      - ENV=production
+      - VIRTUAL_HOST=bestfest.gordey.dev
+      - LETSENCRYPT_HOST=bestfest.gordey.dev
+      - VIRTUAL_PORT=3000
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    volumes:
+      - db:/data/db
+      - dbconfig:/data/configdb
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+volumes:
+  db:
+    driver: local
+  dbconfig:
+    driver: local
+  certs:
+  vhost.d:
+  html:
+
+
+
+

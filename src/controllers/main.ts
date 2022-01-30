@@ -53,14 +53,17 @@ export const findFestivals = async (req: Request, res: Response, next: NextFunct
             artists.forEach(searchingArtist => {
                 if (festivalArtist._id.toString() === searchingArtist._id) {
                     festivalPriority += searchingArtist.priority
-                    matchedArtists.push(festivalArtist);
+                    matchedArtists.push({
+                        ...festivalArtist,
+                        priority: searchingArtist.priority
+                    });
                 }
             })
         })
         return {
             ...festival,
             priority: festivalPriority,
-            matchedArtists
+            matchedArtists: matchedArtists.sort((a, b) => b.priority - a.priority)
         }
     })
 

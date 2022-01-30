@@ -43,6 +43,12 @@ const isDocker = process.env.DOCKER;
 const mongoHost: string = isDocker ? config.database.host : 'localhost';
 const dbName: string = config.database.name;
 
+app.use((req, res, next) => {
+    if (req.method !== 'GET') return next();
+    if (req.accepts(['json', 'text']) === 'json') return next();
+    res.sendFile(path.join(__dirname, '/index.html'));
+})
+
 mongoose.connect(`mongodb://${mongoHost}:27017/${dbName}`, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         app.listen(3000, () => {

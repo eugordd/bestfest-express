@@ -14,8 +14,9 @@ import errorHandler from "./middlewares/errorHandler";
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Access-Control-Allow-Origin', '*');

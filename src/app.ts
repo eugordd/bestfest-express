@@ -8,7 +8,7 @@ import config from './config/config';
 import artistRoutes from './routes/admin/artist';
 import festivalRoutes from './routes/admin/festival';
 import genreRoues from './routes/admin/genre';
-import adminRoutes from './routes/admin/auth';
+import authRoutes from './routes/admin/auth';
 import mainRoutes from './routes/main';
 import errorHandler from "./middlewares/errorHandler";
 
@@ -26,13 +26,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 })
 
 // admin routes
-app.use('/admin/artists', artistRoutes);
-app.use('/admin/festivals', festivalRoutes);
-app.use('/admin/genres', genreRoues);
-app.use('/admin', adminRoutes);
+app.use('/api/admin/artists', artistRoutes);
+app.use('/api/admin/festivals', festivalRoutes);
+app.use('/api/admin/genres', genreRoues);
+app.use('/api/admin/auth', authRoutes);
 
 // app routes
-app.use('/app', mainRoutes);
+app.use('/api/app', mainRoutes);
 
 app.use(errorHandler);
 

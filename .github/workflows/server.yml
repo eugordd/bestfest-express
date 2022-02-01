@@ -50,10 +50,10 @@ jobs:
           USER: ${{ secrets.SSH_USER }}
 
         with:
-          args: cd /www &&
-            rm -rf project &&
-            git clone git@github.com:${{ github.repository }} project &&
-            cd project &&
+          args: cd ../home/ &&
+            rm -rf bestfest &&
+            git clone git@github.com:${{ github.repository }} bestfest &&
+            cd bestfest &&
             git checkout server &&
             chmod -R +x ./devops &&
             sh ./devops/init.sh

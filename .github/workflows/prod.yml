@@ -1,12 +1,12 @@
-name: Main
+name: Production
 
 on:
   push:
     branches:
-      - main
+      - production
   pull_request:
     branches:
-      - main
+      - production
 
   workflow_dispatch:
 
@@ -54,7 +54,7 @@ jobs:
             rm -rf bestfest &&
             git clone git@github.com:${{ github.repository }} bestfest &&
             cd bestfest &&
-            git checkout server &&
+            git checkout production &&
             chmod -R +x ./devops &&
             sh ./devops/init.sh
 

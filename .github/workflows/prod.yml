@@ -1,12 +1,12 @@
-name: Main
+name: Production
 
 on:
   push:
     branches:
-      - main
+      - production
   pull_request:
     branches:
-      - main
+      - production
 
   workflow_dispatch:
 
@@ -50,11 +50,11 @@ jobs:
           USER: ${{ secrets.SSH_USER }}
 
         with:
-          args: cd /www &&
-            rm -rf project &&
-            git clone git@github.com:${{ github.repository }} project &&
-            cd project &&
-            git checkout server &&
+          args: cd ../home/ &&
+            rm -rf bestfest &&
+            git clone git@github.com:${{ github.repository }} bestfest &&
+            cd bestfest &&
+            git checkout production &&
             chmod -R +x ./devops &&
             sh ./devops/init.sh
 

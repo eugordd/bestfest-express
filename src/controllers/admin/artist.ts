@@ -41,6 +41,9 @@ export const getArtists = async (req: Request, res: Response, next: NextFunction
             $in: searchByCountry(search)
         };
 
+        const skip: number = req.skip || 0;
+        const limit: number = Number(req.query.number as string) || 10;
+
         const aggregation = [
             {
                 $lookup: {
@@ -62,15 +65,14 @@ export const getArtists = async (req: Request, res: Response, next: NextFunction
                 }
             },
             {
-                $skip: req.skip
+                $skip: skip
             },
             {
-                $limit: req.query.limit
+                $limit: limit
             }
         ];
 
         const total: number = await Artist.countDocuments();
-        // @ts-ignore
         const artists: Array<Artist> = await Artist.aggregate(aggregation);
 
         const data = {

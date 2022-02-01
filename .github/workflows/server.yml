@@ -1,0 +1,61 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Copy repository to workflow
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.5.1
+      with:
+        node-version: 16.x
+        
+    - name: Update apt
+      run: sudo apt update
+        
+    - name: Install yarn
+      run: sudo apt install --no-install-recommends yarn
+
+    - name: Install dependencies
+      run: yarn
+
+    - name: Check Typescript Version
+      run: tsc -v
+    
+    - name: Build app
+      run: yarn build
+      
+  deploy:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Update production
+        uses: maddox/actions/ssh@master
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.SSH_HOST }}
+          USER: ${{ secrets.SSH_USER }}
+
+        with:
+          args: cd /www &&
+            rm -rf project &&
+            git clone git@github.com:${{ github.repository }} project &&
+            cd project &&
+            git checkout server &&
+            chmod -R +x ./devops &&
+            sh ./devops/init.sh
+
+    needs: build

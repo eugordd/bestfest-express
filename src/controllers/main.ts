@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectId } from 'mongodb';
 
-import Festival from '../models/festival';
+import { FestivalModel } from '../models/festival';
 import Artist from '../models/artist';
 import { countries } from "countries-list";
 import {log} from "util";
@@ -45,7 +45,7 @@ export const findFestivals = async (req: Request, res: Response, next: NextFunct
         }
     ]
 
-    const festivals = await Festival.aggregate(aggregation);
+    const festivals = await FestivalModel.aggregate(aggregation);
 
     const formattedFestivals = festivals.map(festival => {
         let festivalPriority = 0, matchedArtists: Array<any> = [];

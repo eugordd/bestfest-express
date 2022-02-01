@@ -1,7 +1,7 @@
 import { Schema, Types, model } from 'mongoose';
 import { countries } from "countries-list";
 
-export interface FestivalModel {
+export interface IFestival {
     name: string,
     description: string,
     country: string,
@@ -12,8 +12,7 @@ export interface FestivalModel {
     artists: Array<Types.ObjectId>,
 }
 
-
-const festivalSchema = new Schema<FestivalModel>({
+const festivalSchema = new Schema<IFestival>({
     name: {
         type: String,
         required: true
@@ -45,4 +44,4 @@ const festivalSchema = new Schema<FestivalModel>({
     }]
 });
 
-export default model('Festival', festivalSchema);
+export const FestivalModel = model<IFestival>('Festival', festivalSchema);

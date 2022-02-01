@@ -43,10 +43,12 @@ export const getGenres = async (req: Request, res: Response, next: NextFunction)
             ]
         }
 
+        const skip: number = req.skip || 0;
+        const limit: number = Number(req.query.number as string) || 10;
         const total: number = await Genre.countDocuments();
         const genres: Array<Genre> = await Genre.find(searchQuery)
-            .skip(req.skip)
-            .limit(req.query.limit)
+            .skip(skip)
+            .limit(limit)
             .lean();
 
         const data = {

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import Festival from '../../models/festival';
+import { FestivalModel, IFestival } from '../../models/festival';
 import Genre from '../../models/genre';
 import Artist from '../../models/artist';
 
@@ -8,6 +8,7 @@ import formatValidationError from "../../utils/formatValidationError";
 import { validationResult } from "express-validator";
 import escapeStringRegexp from "../../utils/escapeRegExp";
 import searchByCountry from "../../utils/mongoose/searchByCountry";
+import { Types, HydratedDocument } from "mongoose";
 
 type FestivalRequestParams = {
     festivalId: string
@@ -39,6 +40,9 @@ export const getFestivals = async (req: Request, res: Response, next: NextFuncti
             $in: searchByCountry(search)
         };
 
+        const skip: number = req.skip || 0;
+        const limit: number = Number(req.query.number as string) || 10;
+
         const aggregation = [
             {
                 $lookup: {
@@ -69,15 +73,15 @@ export const getFestivals = async (req: Request, res: Response, next: NextFuncti
                 }
             },
             {
-                $skip: req.skip
+                $skip: skip
             },
             {
-                $limit: req.query.limit
+                $limit: limit
             }
         ]
 
-        const total: number = await Festival.countDocuments();
-        const festivals: Array<Object> = await Festival.aggregate(aggregation);
+        const total: number = await FestivalModel.countDocuments();
+        const festivals: Array<Object> = await FestivalModel.aggregate(aggregation);
 
         const data = {
             festivals,
@@ -100,7 +104,7 @@ export const addFestival = async (req: Request, res: Response, next: NextFunctio
         if (!errors.isEmpty()) return next(formatValidationError(errors));
 
         const { name, description, country, place, dateStart, dateEnd, genres, artists } = req.body as FestivalRequestBody;
-        const festival = new Festival({
+        const festival = new FestivalModel({
             name,
             description,
             country,
@@ -125,7 +129,7 @@ export const addFestival = async (req: Request, res: Response, next: NextFunctio
 export const getFestival = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { festivalId } = req.params as FestivalRequestParams;
-        const festival = await Festival.findById(festivalId).populate('artists');
+        const festival = await FestivalModel.findById(festivalId).populate('artists');
         const data = {
             festival
         }
@@ -140,16 +144,21 @@ export const editFestival = async (req: Request, res: Response, next: NextFuncti
         const { festivalId } = req.params as FestivalRequestParams;
         const { name, description, country, place, dateStart, dateEnd, genres, artists } = req.body as FestivalRequestBody
 
-        const festival = await Festival.findById(festivalId);
+        const festival: HydratedDocument<IFestival> | null = await FestivalModel.findById(festivalId);
+        if (!festival) {
+            const error : ResponseError = new Error('Authorization header is not valid');
+            error.code = 401;
+            throw error;
+        }
         festival.name = name;
         festival.description = description;
         festival.country = country;
         festival.place = place;
         festival.dateStart = dateStart;
         festival.dateEnd = dateEnd;
-        festival.genres = genres;
-        festival.artists = artists;
-        festival.save();
+        festival.genres =  genres.map(genre => new Types.ObjectId(genre));
+        festival.artists = artists.map(artist => new Types.ObjectId(artist));
+        await festival.save();
 
         const data = {
             festival
@@ -163,7 +172,7 @@ export const editFestival = async (req: Request, res: Response, next: NextFuncti
 export const deleteFestival = async(req: Request, res: Response, next: NextFunction) => {
     try {
         const { festivalId } = req.params as FestivalRequestParams;
-        await Festival.findByIdAndRemove(festivalId);
+        await FestivalModel.findByIdAndRemove(festivalId);
 
         const data = {
             message: 'Deleted successfully'
@@ -177,7 +186,7 @@ export const deleteFestival = async(req: Request, res: Response, next: NextFunct
 export const deleteFestivalsList = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { ids } = req.body as FestivalsListRequestBody;
-        await Festival.deleteMany({ _id: { $in: ids } });
+        await FestivalModel.deleteMany({ _id: { $in: ids } });
 
         const data = {
             message: 'Deleted successfully'

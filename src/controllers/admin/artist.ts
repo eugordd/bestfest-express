@@ -70,6 +70,7 @@ export const getArtists = async (req: Request, res: Response, next: NextFunction
         ];
 
         const total: number = await Artist.countDocuments();
+        // @ts-ignore
         const artists: Array<Artist> = await Artist.aggregate(aggregation);
 
         const data = {

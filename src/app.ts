@@ -36,10 +36,6 @@ app.use('/api/app', mainRoutes);
 
 app.use(errorHandler);
 
-// app.listen(8080, () => {
-//     console.log('Server started successfully!');
-// });
-
 const isDocker = process.env.DOCKER;
 const mongoHost: string = isDocker ? config.database.host : 'localhost';
 const dbName: string = config.database.name;
@@ -50,7 +46,7 @@ app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, '/index.html'));
 })
 
-mongoose.connect(`mongodb://${mongoHost}:27017/${dbName}`, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(`mongodb://${mongoHost}:27017/${dbName}`)
     .then(() => {
         app.listen(3000, () => {
             console.log('Server started successfully!');

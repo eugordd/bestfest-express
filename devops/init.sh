@@ -1,13 +1,13 @@
 echo "Init script started"
-docker-compose -f ./devops/docker-compose.yml down
+docker-compose -f ./devops/docker-compose.yml -p bestfest --project-directory ./ down
 echo "docker-compose down ✅"
 docker rmi "$(docker images | grep 'bestfest')"
 echo "docker rmi ✅"
-docker-compose -f ./devops/docker-compose.yml rm -v
+docker-compose -f ./devops/docker-compose.yml -p bestfest --project-directory ./ rm -v
 echo "docker-compose rm -v ✅"
-docker-compose -f ./devops/docker-compose.yml build
+docker-compose -f ./devops/docker-compose.yml -p bestfest --project-directory ./ build
 echo "docker-compose build ✅"
-docker-compose -f ./devops/docker-compose.yml up -d
+docker-compose -f ./devops/docker-compose.yml -p bestfest --project-directory ./ up -d
 echo "docker-compose up ✅"
 docker volume prune -f
 echo "docker volume prune ✅"

@@ -1,6 +1,11 @@
 mongo -- "$MONGO_INITDB_DATABASE" <<EOF
-    db = db.getSiblingDB('bestfest');
+    rootUser = '$MONGO_INITDB_ROOT_USERNAME';
+    rootPassword = '$MONGO_INITDB_ROOT_PASSWORD';
+    adminDb = db.getSiblingDB('admin');
+    adminDb.auth(rootUser, rootPassword);
+
+    bestfestDb = db.getSiblingDB('bestfest');
     username = '$MONGO_DEFAULT_ADMIN_USERNAME'
     password = '$MONGO_DEFAULT_ADMIN_PASSWORD'
-    db.admin.insertOne({ username: username, password: password, email: 'eugord@yandex.ru' });
+    bestfestDb.admin.insertOne({ username: username, password: password, email: 'eugord@yandex.ru' });
 EOF

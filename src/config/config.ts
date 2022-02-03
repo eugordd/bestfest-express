@@ -4,6 +4,6 @@ export default {
     },
     database: {
         host: 'mongo',
-        name: 'bestfest-express'
+        name: 'bestfest'
     }
 };

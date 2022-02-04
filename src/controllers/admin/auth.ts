@@ -7,7 +7,7 @@ import Admin from '../../models/admin';
 type RegisterRequest = {
     email: string,
     password: string,
-    name: string
+    username: string
 }
 
 type LoginRequest = {
@@ -16,7 +16,7 @@ type LoginRequest = {
 }
 
 export const adminRegister = async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password, name } = req.body as RegisterRequest;
+    const { email, password, username } = req.body as RegisterRequest;
     try {
         const isExist = await Admin.findOne({ email });
         if (isExist) {
@@ -28,7 +28,7 @@ export const adminRegister = async (req: Request, res: Response, next: NextFunct
         const hashedPw = await bcrypt.hash(password, 12);
         const admin = new Admin({
             email,
-            name,
+            username,
             password: hashedPw
         });
         await admin.save();

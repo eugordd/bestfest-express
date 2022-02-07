@@ -1,7 +1,7 @@
 echo "Init script started"
 docker-compose -f ./devops/docker-compose.yml -p bestfest --project-directory ./ down
 echo "docker-compose down ✅"
-docker rmi "$(docker images | grep 'bestfest')"
+docker rmi "$(docker images -q)"
 echo "docker rmi ✅"
 docker-compose -f ./devops/docker-compose.yml -p bestfest --project-directory ./ rm -v
 echo "docker-compose rm -v ✅"

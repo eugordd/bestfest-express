@@ -60,6 +60,10 @@ jobs:
             cd bestfest &&
             git checkout production &&
             chmod -R +x ./devops &&
+            export MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} &&
+            export MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} &&
+            export MONGO_DEFAULT_ADMIN_USERNAME=${{ secrets.MONGO_DEFAULT_ADMIN_USERNAME }} &&
+            export MONGO_DEFAULT_ADMIN_PASSWORD=${{ secrets.MONGO_DEFAULT_ADMIN_PASSWORD }} &&
             sh ./devops/init.sh
 
     needs: build

@@ -1,30 +1,35 @@
 version: "3"
 services:
-  reverse-proxy:
-    container_name: reverse-proxy
-    image: jwilder/nginx-proxy
+  nginx-proxy:
+    container_name: nginx-proxy
+    image: nginxproxy/nginx-proxy
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - certs:/etc/nginx/certs
-      - vhost.d:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
+      - ./volumes/nginx/conf:/etc/nginx/conf.d
+      - ./volumes/nginx/vhost:/etc/nginx/vhost.d
+      - ./volumes/nginx/html:/usr/share/nginx/html
+      - ./volumes/nginx/certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    depends_on:
-      - nginx-proxy-letsencrypt
+    networks:
+      - proxy-network
 
-  nginx-proxy-letsencrypt:
-    container_name: nginx-proxy-letsencrypt
-    image: jrcs/letsencrypt-nginx-proxy-companion
+  acme-companion:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
     volumes:
-      - certs:/etc/nginx/certs
-      - vhost.d:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
+      - ./volumes/nginx/conf:/etc/nginx/conf.d
+      - ./volumes/nginx/vhost:/etc/nginx/vhost.d
+      - ./volumes/nginx/html:/usr/share/nginx/html
+      - ./volumes/nginx/certs:/etc/nginx/certs:rw
+      - ./volumes/nginx/acme:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      - NGINX_PROXY_CONTAINER=reverse-proxy
+      - NGINX_PROXY_CONTAINER=nginx-proxy
       - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory
+    networks:
+      - proxy-network
 
   nodejs:
     image: nodejs
@@ -62,10 +67,7 @@ volumes:
     driver: local
   dbconfig:
     driver: local
-  certs:
-  vhost.d:
-  html:
 
-
-
-
+networks:
+  proxy-network:
+    driver: bridge

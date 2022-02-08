@@ -27,14 +27,13 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - NGINX_PROXY_CONTAINER=nginx-proxy
-      - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory
     networks:
       - proxy-network
 
   nodejs:
     image: nodejs
     container_name: nodejs
-    build: .
+    build: ""
     restart: always
     ports:
       - "3000:3000"
@@ -60,7 +59,7 @@ services:
     volumes:
       - db:/data/db
       - dbconfig:/data/configdb
-      - ./devops/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+      - ./devops/mongo-init-prod.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
 
 volumes:
   db:

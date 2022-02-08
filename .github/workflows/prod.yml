@@ -64,6 +64,6 @@ jobs:
             export MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} &&
             export MONGO_DEFAULT_ADMIN_USERNAME=${{ secrets.MONGO_DEFAULT_ADMIN_USERNAME }} &&
             export MONGO_DEFAULT_ADMIN_PASSWORD=${{ secrets.MONGO_DEFAULT_ADMIN_PASSWORD }} &&
-            sh ./devops/init.sh
+            sh ./devops/init-prod.sh
 
     needs: build

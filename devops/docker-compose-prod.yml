@@ -3,6 +3,7 @@ services:
   nginx-proxy:
     container_name: nginx-proxy
     image: nginxproxy/nginx-proxy
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -18,6 +19,9 @@ services:
   acme-companion:
     image: nginxproxy/acme-companion
     container_name: nginx-proxy-acme
+    restart: always
+    depends_on:
+      - nginx-proxy
     volumes:
       - conf:/etc/nginx/conf.d
       - vhost:/etc/nginx/vhost.d
@@ -33,7 +37,7 @@ services:
   nodejs:
     image: nodejs
     container_name: nodejs
-    build: ""
+    build: .
     restart: always
     ports:
       - "3000:3000"

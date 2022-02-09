@@ -13,8 +13,6 @@ services:
       - html:/usr/share/nginx/html
       - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - proxy-network
 
   acme-companion:
     image: nginxproxy/acme-companion
@@ -31,8 +29,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - NGINX_PROXY_CONTAINER=nginx-proxy
-    networks:
-      - proxy-network
 
   nodejs:
     image: nodejs
@@ -80,8 +76,3 @@ volumes:
     driver: local
   acme:
     driver: local
-
-
-networks:
-  proxy-network:
-    driver: bridge

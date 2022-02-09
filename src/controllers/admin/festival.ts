@@ -41,7 +41,7 @@ export const getFestivals = async (req: Request, res: Response, next: NextFuncti
         };
 
         const skip: number = req.skip || 0;
-        const limit: number = Number(req.query.number as string) || 10;
+        const limit: number = Number(req.query.limit as string) || 10;
 
         const aggregation = [
             {

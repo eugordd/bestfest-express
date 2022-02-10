@@ -18,18 +18,27 @@ export const dbConnect = () => {
     const isDocker = process.env.DOCKER;
     const mongoHost: string = isDocker ? config.database.host : 'localhost';
     const dbName: string = config.database.name;
+
+    console.log('isDocker?', isDocker);
+    console.log('CREDENTIALS')
     console.log(mongoUser);
     console.log(mongoPassword);
-    const mongoUrl = isDocker ?
-        `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}` :
-        `mongodb://${mongoHost}:27017/${dbName}`;
+    console.log('-----------');
+
+    // console.log('connection url', `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}`);
+
+    // const mongoUrl = isDocker ?
+    //     `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}` :
+    //     `mongodb://${mongoHost}:27017/${dbName}`;
+
+    const mongoUrl = `mongodb://${mongoHost}:27017/${dbName}`;
 
     mongoose.connect(mongoUrl, {});
     const db = mongoose.connection;
     let retries = 0;
 
     db.on('error', () => {
-        if (retries >= 30) {
+        if (retries >= 1) {
             console.error.bind(console, 'connection error:');
         } else {
             console.log('Mongo restoring, expected unsuccessful connection');

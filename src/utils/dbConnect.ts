@@ -19,19 +19,15 @@ export const dbConnect = () => {
     const mongoHost: string = isDocker ? config.database.host : 'localhost';
     const dbName: string = config.database.name;
 
-    console.log('isDocker?', isDocker);
-    console.log('CREDENTIALS')
-    console.log(mongoUser);
-    console.log(mongoPassword);
-    console.log('-----------');
-
-    console.log('connection url', `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017`);
+    console.log('isDocker:', isDocker);
+    console.log('mongoUser:', mongoUser);
+    console.log('mongoPassword:', mongoPassword);
 
     const mongoUrl = isDocker ?
-        `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}` :
+        `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017` :
         `mongodb://${mongoHost}:27017/${dbName}`;
 
-    // const mongoUrl = `mongodb://${mongoHost}:27017/${dbName}`;
+    console.log('mongoUrl:', mongoUrl)
 
     mongoose.connect(mongoUrl, {});
     const db = mongoose.connection;

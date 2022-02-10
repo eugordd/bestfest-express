@@ -13,21 +13,18 @@ const initModels = () => {
 };
 
 export const dbConnect = () => {
-    const mongoUser = process.env.MONGO_DB_USER;
-    const mongoPassword = process.env.MONGO_DB_PASSWORD;
+    const mongoUser = process.env.MONGO_INITDB_ROOT_USERNAME;
+    const mongoPassword = process.env.MONGO_INITDB_ROOT_PASSWORD;
     const isDocker = process.env.DOCKER;
     const mongoHost: string = isDocker ? config.database.host : 'localhost';
     const dbName: string = config.database.name;
-    const mongoUrl = `mongodb://${mongoHost}:27017/${dbName}`;
+    console.log(mongoUser);
+    console.log(mongoPassword);
+    const mongoUrl = isDocker ?
+        `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}` :
+        `mongodb://${mongoHost}:27017/${dbName}`;
 
-    const prodOptions = {
-        user: mongoUser,
-        pass: mongoPassword,
-    };
-
-    const options = isDocker ? prodOptions : {};
-
-    mongoose.connect(mongoUrl, options);
+    mongoose.connect(mongoUrl, {});
     const db = mongoose.connection;
     let retries = 0;
 
@@ -43,7 +40,7 @@ export const dbConnect = () => {
                 if (db.readyState !== 0) {
                     return;
                 }
-                mongoose.connect(mongoUrl, options);
+                mongoose.connect(mongoUrl, {});
             }, 1000);
         }
     });

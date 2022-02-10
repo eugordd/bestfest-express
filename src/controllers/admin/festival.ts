@@ -7,7 +7,7 @@ import Artist from '../../models/artist';
 import formatValidationError from "../../utils/formatValidationError";
 import { validationResult } from "express-validator";
 import escapeStringRegexp from "../../utils/escapeRegExp";
-import searchByCountry from "../../utils/mongoose/searchByCountry";
+import searchByCountry from "../../utils/searchByCountry";
 import { Types, HydratedDocument } from "mongoose";
 
 type FestivalRequestParams = {

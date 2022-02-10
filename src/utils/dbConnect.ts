@@ -25,7 +25,7 @@ export const dbConnect = () => {
 
     const mongoUrl = isDocker ?
         `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017` :
-        `mongodb://${mongoHost}:27017/${dbName}`;
+        `mongodb://${mongoHost}:27017`;
 
     console.log('mongoUrl:', mongoUrl)
 
@@ -52,6 +52,8 @@ export const dbConnect = () => {
     db.once('open', () => {
         console.log('mongo instance mounted');
     });
+
+    db.useDb('bestfest');
 
     initModels();
 

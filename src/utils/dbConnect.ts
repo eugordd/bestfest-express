@@ -21,7 +21,6 @@ export const dbConnect = () => {
     const mongoUrl = `mongodb://${mongoHost}:27017/${dbName}`;
 
     const prodOptions = {
-        authSource: 'admin',
         user: mongoUser,
         pass: mongoPassword,
     };

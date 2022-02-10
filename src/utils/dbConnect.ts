@@ -25,13 +25,13 @@ export const dbConnect = () => {
     console.log(mongoPassword);
     console.log('-----------');
 
-    // console.log('connection url', `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}`);
+    console.log('connection url', `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017`);
 
-    // const mongoUrl = isDocker ?
-    //     `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}` :
-    //     `mongodb://${mongoHost}:27017/${dbName}`;
+    const mongoUrl = isDocker ?
+        `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}` :
+        `mongodb://${mongoHost}:27017/${dbName}`;
 
-    const mongoUrl = `mongodb://${mongoHost}:27017/${dbName}`;
+    // const mongoUrl = `mongodb://${mongoHost}:27017/${dbName}`;
 
     mongoose.connect(mongoUrl, {});
     const db = mongoose.connection;

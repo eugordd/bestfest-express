@@ -60,12 +60,8 @@ jobs:
             rm -rf bestfest &&
             git clone git@github.com:${{ github.repository }} bestfest &&
             cd bestfest &&
-            git checkout production &&
-            chmod -R +x ./devops &&
             export MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_INITDB_ROOT_USERNAME }} &&
             export MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} &&
-            export MONGO_DEFAULT_ADMIN_USERNAME=${{ secrets.MONGO_DEFAULT_ADMIN_USERNAME }} &&
-            export MONGO_DEFAULT_ADMIN_PASSWORD=${{ secrets.MONGO_DEFAULT_ADMIN_PASSWORD }} &&
             export MONGO_BESTFESTDB_ROOT_USERNAME=${{ secrets.MONGO_BESTFESTDB_ROOT_USERNAME }} &&
             export MONGO_BESTFESTDB_ROOT_PASSWORD=${{ secrets.MONGO_BESTFESTDB_ROOT_PASSWORD }} &&
             sh ./devops/init-prod.sh

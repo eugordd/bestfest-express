@@ -67,6 +67,6 @@ jobs:
             export MONGO_DEFAULT_ADMIN_USERNAME=${{ secrets.MONGO_DEFAULT_ADMIN_USERNAME }} &&
             export MONGO_DEFAULT_ADMIN_PASSWORD=${{ secrets.MONGO_DEFAULT_ADMIN_PASSWORD }} &&
             export MONGO_BESTFESTDB_ROOT_USERNAME=admin &&
-            export MONGO_BESTFESTDB_ROOT_PASSWORD=t&0R$5Fq62p6SE8GvV && sh ./devops/init-prod.sh
+            sh ./devops/init-prod.sh
 
     needs: build

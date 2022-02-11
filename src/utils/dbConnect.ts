@@ -12,7 +12,7 @@ const initModels = () => {
         .forEach(file => require(path.join(modelsPath, file)));
 };
 
-export const dbConnect = () => {
+export const dbConnect = async () => {
     const mongoUser = process.env.MONGO_INITDB_ROOT_USERNAME;
     const mongoPassword = process.env.MONGO_INITDB_ROOT_PASSWORD;
     const isDocker = process.env.DOCKER;
@@ -29,33 +29,32 @@ export const dbConnect = () => {
 
     console.log('mongoUrl:', mongoUrl)
 
-    mongoose.connect(mongoUrl, {});
-    const db = mongoose.connection;
+    await mongoose.connect(mongoUrl, {});
+    const connection = mongoose.connection;
     let retries = 0;
 
-    db.on('error', () => {
+    connection.on('error', () => {
         if (retries >= 1) {
             console.error.bind(console, 'connection error:');
         } else {
             console.log('Mongo restoring, expected unsuccessful connection');
         }
-        if (db.readyState === 0) {
-            setTimeout(() => {
+        if (connection.readyState === 0) {
+            setTimeout(async () => {
                 retries += 1;
-                if (db.readyState !== 0) {
+                if (connection.readyState !== 0) {
                     return;
                 }
-                mongoose.connect(mongoUrl, {});
+                await mongoose.connect(mongoUrl, {});
             }, 1000);
         }
     });
-    db.once('open', () => {
+
+    connection.once('open', () => {
         console.log('mongo instance mounted');
+        connection.useDb('bestfest');
+        initModels();
     });
 
-    db.useDb('bestfest');
-
-    initModels();
-
-    return db;
+    return connection;
 };

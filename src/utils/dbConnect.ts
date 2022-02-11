@@ -52,9 +52,10 @@ export const dbConnect = async () => {
 
     connection.once('open', () => {
         console.log('mongo instance mounted');
-        connection.useDb('bestfest');
-        initModels();
     });
+
+    await connection.useDb('bestfest');
+    initModels();
 
     return connection;
 };

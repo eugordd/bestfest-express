@@ -12,9 +12,9 @@ const initModels = () => {
         .forEach(file => require(path.join(modelsPath, file)));
 };
 
-export const dbConnect = async () => {
-    const mongoUser = process.env.MONGO_INITDB_ROOT_USERNAME;
-    const mongoPassword = process.env.MONGO_INITDB_ROOT_PASSWORD;
+export const dbConnect = () => {
+    const mongoUser = process.env.MONGO_BESTFESTDB_ROOT_USERNAME;
+    const mongoPassword = process.env.MONGO_BESTFESTDB_ROOT_PASSWORD;
     const isDocker = process.env.DOCKER;
     const mongoHost: string = isDocker ? config.database.host : 'localhost';
     const dbName: string = config.database.name;
@@ -24,25 +24,25 @@ export const dbConnect = async () => {
     console.log('mongoPassword:', mongoPassword);
 
     const mongoUrl = isDocker ?
-        `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017` :
-        `mongodb://${mongoHost}:27017`;
+        `mongodb://${mongoUser}:${mongoPassword}@${mongoHost}:27017/${dbName}` :
+        `mongodb://${mongoHost}:27017/${dbName}`;
 
     console.log('mongoUrl:', mongoUrl)
 
-    await mongoose.connect(mongoUrl, {});
-    const connection = mongoose.connection;
+    mongoose.connect(mongoUrl, {});
+    const db = mongoose.connection;
     let retries = 0;
 
-    connection.on('error', () => {
+    db.on('error', () => {
         if (retries >= 1) {
             console.error.bind(console, 'connection error:');
         } else {
             console.log('Mongo restoring, expected unsuccessful connection');
         }
-        if (connection.readyState === 0) {
+        if (db.readyState === 0) {
             setTimeout(async () => {
                 retries += 1;
-                if (connection.readyState !== 0) {
+                if (db.readyState !== 0) {
                     return;
                 }
                 await mongoose.connect(mongoUrl, {});
@@ -50,12 +50,11 @@ export const dbConnect = async () => {
         }
     });
 
-    connection.once('open', () => {
+    db.once('open', () => {
         console.log('mongo instance mounted');
     });
 
-    await connection.useDb('bestfest');
     initModels();
 
-    return connection;
+    return db;
 };

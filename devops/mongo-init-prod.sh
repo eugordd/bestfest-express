@@ -5,13 +5,13 @@ mongo -- "$MONGO_INITDB_DATABASE" <<EOF
     adminDb.auth(rootUser, rootPassword);
 
     dbName = '$MONGO_INITDB_DATABASE';
-    bestfestDb = db.getSiblingDB(dbName');
+    bestfestDb = db.getSiblingDB(dbName);
     bestfestUser = '$MONGO_BESTFESTDB_ROOT_USERNAME';
     bestfestPassword = '$MONGO_BESTFESTDB_ROOT_PASSWORD';
     bestfestDb.createUser({
       user: bestfestUser,
       pwd: bestfestPassword,
-      roles: [{ role: 'readWrite', db: dbName}]
+      roles: [{ role: 'readWrite', db: dbName }]
     })
 
     defaultUser = '$MONGO_DEFAULT_ADMIN_USERNAME'

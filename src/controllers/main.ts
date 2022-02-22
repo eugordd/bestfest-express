@@ -2,23 +2,26 @@ import { NextFunction, Request, Response } from "express";
 import { ObjectId } from 'mongodb';
 
 import { FestivalModel } from '../models/festival';
-import Artist from '../models/artist';
+import Artist, {IArtist} from '../models/artist';
 import { countries } from "countries-list";
-import {log} from "util";
 
 type ArtistQueryParam = {
     _id: string,
     priority: number
 }
 
-export const findFestivals = async (req: Request, res: Response, next: NextFunction) => {
-    const yearStart: string = new Date(new Date().getFullYear(), 0, 1).toISOString();
-    const yearEnd: string = new Date(new Date().getFullYear(), 12, 31).toISOString();
+interface IArtistWithPriority extends IArtist {
+    priority: number
+}
 
-    const continents : Array<string> = req.body.continents as Array<string> || [];
-    const dateStart: string = req.body.dateStart as string|| yearStart;
-    const dateEnd: string = req.body.dateEnd as string || yearEnd;
-    const artists: Array<ArtistQueryParam> = req.body.artists as unknown as Array<ArtistQueryParam> || [];
+export const findFestivals = async (req: Request, res: Response, next: NextFunction) => {
+    const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString();
+    const yearEnd = new Date(new Date().getFullYear(), 12, 31).toISOString();
+
+    const continents = req.body.continents as Array<string>;
+    const dateStart = req.body.dateStart;
+    const dateEnd = req.body.dateEnd;
+    const artists = req.body.artists as Array<ArtistQueryParam>;
 
     const countriesInContinents = Object.entries(countries)
         .filter(country => continents.includes(country[1].continent))
@@ -48,7 +51,7 @@ export const findFestivals = async (req: Request, res: Response, next: NextFunct
     const festivals = await FestivalModel.aggregate(aggregation);
 
     const formattedFestivals = festivals.map(festival => {
-        let festivalPriority = 0, matchedArtists: Array<any> = [];
+        let festivalPriority = 0, matchedArtists: Array<IArtistWithPriority> = [];
         festival.artists.forEach((festivalArtist: any) => {
             artists.forEach(searchingArtist => {
                 if (festivalArtist._id.toString() === searchingArtist._id) {
@@ -75,10 +78,17 @@ export const findFestivals = async (req: Request, res: Response, next: NextFunct
 
 export const getArtists = async (req: Request, res: Response, next: NextFunction) => {
     let search = req.query.search as string;
+    let selected = req.query.selected as Array<string>;
+
     if (!search) search = '';
     search = search.trim().toLowerCase();
 
-    const artists: Array<Object> = await Artist.find({ name: new RegExp(search, 'i') });
+    const artists: Array<Object> = await Artist
+        .find({
+            name: new RegExp(search, 'i'),
+            _id: { "$nin": selected }
+        })
+        .limit(5);
 
     const data = {
         artists

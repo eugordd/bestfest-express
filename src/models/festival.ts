@@ -3,17 +3,24 @@ import { countries } from "countries-list";
 
 export interface IFestival {
     name: string,
+    shortName: string,
     description: string,
     country: string,
     place: string,
     dateStart: Date,
     dateEnd: Date,
+    imageUrl: string,
+    website: string,
     genres: Array<Types.ObjectId>,
     artists: Array<Types.ObjectId>,
 }
 
 const festivalSchema = new Schema<IFestival>({
     name: {
+        type: String,
+        required: true
+    },
+    shortName: {
         type: String,
         required: true
     },
@@ -33,6 +40,12 @@ const festivalSchema = new Schema<IFestival>({
     },
     dateEnd: {
         type: Date
+    },
+    imageUrl: {
+        type: String
+    },
+    website: {
+        type: String
     },
     genres: [{
         type: Schema.Types.ObjectId,

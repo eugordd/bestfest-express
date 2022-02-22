@@ -46,14 +46,14 @@ export const adminLogin = async (req: Request, res: Response, next: NextFunction
         if (!admin) {
             const error: ResponseError = new Error('Incorrect email or password');
             error.code = 401;
-            next(error);
+            throw error;
         }
 
         const isValid = await bcrypt.compare(password, admin.password);
         if (!isValid) {
             const error: ResponseError = new Error('Incorrect email or password');
             error.code = 401;
-            next(error);
+            throw error;
         }
 
         const adminSecret = 'yxglX5WFrPPJ75LY73AL';

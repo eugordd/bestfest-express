@@ -16,11 +16,14 @@ type FestivalRequestParams = {
 
 type FestivalRequestBody = {
     name: string,
+    shortName: string,
     description: string,
     country: string,
     place: string,
     dateStart: Date,
     dateEnd: Date,
+    imageUrl: string,
+    website: string,
     genres: string[],
     artists: string[]
 }
@@ -80,7 +83,7 @@ export const getFestivals = async (req: Request, res: Response, next: NextFuncti
             }
         ]
 
-        const total: number = await FestivalModel.countDocuments();
+        const total = await FestivalModel.countDocuments();
         const festivals: Array<Object> = await FestivalModel.aggregate(aggregation);
 
         const data = {
@@ -103,14 +106,30 @@ export const addFestival = async (req: Request, res: Response, next: NextFunctio
         const errors = validationResult(req);
         if (!errors.isEmpty()) return next(formatValidationError(errors));
 
-        const { name, description, country, place, dateStart, dateEnd, genres, artists } = req.body as FestivalRequestBody;
-        const festival = new FestivalModel({
+        const {
             name,
+            shortName,
             description,
             country,
             place,
             dateStart,
             dateEnd,
+            imageUrl,
+            website,
+            genres,
+            artists
+        } = req.body as FestivalRequestBody;
+
+        const festival = new FestivalModel({
+            name,
+            shortName,
+            description,
+            country,
+            place,
+            dateStart,
+            dateEnd,
+            imageUrl,
+            website,
             genres,
             artists
         });
@@ -142,20 +161,35 @@ export const getFestival = async (req: Request, res: Response, next: NextFunctio
 export const editFestival = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { festivalId } = req.params as FestivalRequestParams;
-        const { name, description, country, place, dateStart, dateEnd, genres, artists } = req.body as FestivalRequestBody
+        const {
+            name,
+            shortName,
+            description,
+            country,
+            place,
+            dateStart,
+            dateEnd,
+            imageUrl,
+            website,
+            genres,
+            artists
+        } = req.body as FestivalRequestBody
 
-        const festival: HydratedDocument<IFestival> | null = await FestivalModel.findById(festivalId);
+        const festival = await FestivalModel.findById(festivalId);
         if (!festival) {
-            const error : ResponseError = new Error('Authorization header is not valid');
-            error.code = 401;
+            const error : ResponseError = new Error('Festivals not found');
+            error.code = 404;
             throw error;
         }
         festival.name = name;
+        festival.shortName = shortName;
         festival.description = description;
         festival.country = country;
         festival.place = place;
         festival.dateStart = dateStart;
         festival.dateEnd = dateEnd;
+        festival.imageUrl = imageUrl;
+        festival.website = website;
         festival.genres =  genres.map(genre => new Types.ObjectId(genre));
         festival.artists = artists.map(artist => new Types.ObjectId(artist));
         await festival.save();

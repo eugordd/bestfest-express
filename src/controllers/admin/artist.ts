@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import Artist from '../../models/artist';
+import Artist, { IArtist } from '../../models/artist';
 import Genre from '../../models/genre';
 
 import { validationResult } from "express-validator";
@@ -8,6 +8,7 @@ import formatValidationError from "../../utils/formatValidationError";
 import { countries, continents } from "countries-list";
 import searchByCountry from "../../utils/searchByCountry";
 import escapeStringRegexp from "../../utils/escapeRegExp";
+import { Types } from "mongoose";
 
 type ArtistRequestBody = {
     name: string,
@@ -22,11 +23,6 @@ type ArtistsListRequestBody = {
 
 type ArtistRequestParams = {
     artistId: string
-}
-
-type Artist = {
-    name: string,
-    genres: Array<Object>
 }
 
 export const getArtists = async (req: Request, res: Response, next: NextFunction) => {
@@ -72,8 +68,8 @@ export const getArtists = async (req: Request, res: Response, next: NextFunction
             }
         ];
 
-        const total: number = await Artist.countDocuments();
-        const artists: Array<Artist> = await Artist.aggregate(aggregation);
+        const total = await Artist.countDocuments();
+        const artists = await Artist.aggregate(aggregation);
 
         const data = {
             artists,
@@ -108,11 +104,11 @@ export const addArtist = async (req: Request, res: Response, next: NextFunction)
 
         const { name, description, country, genres } = req.body as ArtistRequestBody;
         
-        const artist = new Artist({
+        const artist = new Artist<IArtist>({
             name,
             description,
             country,
-            genres
+            genres: genres.map(genre => new Types.ObjectId(genre))
         });
         await artist.save();
 
@@ -145,10 +141,17 @@ export const editArtist = async (req: Request, res: Response, next: NextFunction
         const { name, description, country, genres } = req.body as ArtistRequestBody;
 
         const artist = await Artist.findById(artistId);
+
+        if (!artist) {
+            const error : ResponseError = new Error('Artist not found');
+            error.code = 404;
+            throw error;
+        }
+
         artist.name = name;
         artist.description = description;
         artist.country = country;
-        artist.genres = genres;
+        artist.genres = genres.map(genre => new Types.ObjectId(genre));
         await artist.save()
 
         const data = {

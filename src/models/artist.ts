@@ -1,7 +1,14 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import { countries } from "countries-list";
 
-const artistSchema = new Schema({
+export interface IArtist {
+    name: string,
+    description: string,
+    country: string,
+    genres: Array<Types.ObjectId>
+}
+
+const artistSchema = new Schema<IArtist>({
     name: {
         type: String,
         required: true
@@ -20,4 +27,4 @@ const artistSchema = new Schema({
     }],
 });
 
-export default model('Artist', artistSchema);
+export default model<IArtist>('Artist', artistSchema);

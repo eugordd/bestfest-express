@@ -10,6 +10,7 @@ export interface IFestival {
     dateStart: Date,
     dateEnd: Date,
     imageUrl: string,
+    website: string,
     genres: Array<Types.ObjectId>,
     artists: Array<Types.ObjectId>,
 }
@@ -41,7 +42,10 @@ const festivalSchema = new Schema<IFestival>({
         type: Date
     },
     imageUrl: {
-        type: String,
+        type: String
+    },
+    website: {
+        type: String
     },
     genres: [{
         type: Schema.Types.ObjectId,

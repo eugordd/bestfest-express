@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 
-import Genre from '../../models/genre';
+import Genre, { IGenre } from '../../models/genre';
 import formatValidationError from "../../utils/formatValidationError";
 import escapeStringRegexp from "../../utils/escapeRegExp";
 
@@ -17,11 +17,6 @@ type GenresListRequestBody = {
 
 type GenreRequestParams = {
     genreId: string
-}
-
-type Genre = {
-    name: string,
-    symlinks: Array<string>
 }
 
 export const getGenres = async (req: Request, res: Response, next: NextFunction) => {
@@ -46,7 +41,7 @@ export const getGenres = async (req: Request, res: Response, next: NextFunction)
         const skip: number = req.skip || 0;
         const limit: number = Number(req.query.limit as string) || 10;
         const total: number = await Genre.countDocuments();
-        const genres: Array<Genre> = await Genre.find(searchQuery)
+        const genres: Array<IGenre> = await Genre.find(searchQuery)
             .skip(skip)
             .limit(limit)
             .lean();
@@ -67,7 +62,7 @@ export const getGenres = async (req: Request, res: Response, next: NextFunction)
 
 export const getGenresNotDetailed = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const genres: Array<Genre> = await Genre.find().select('name');
+        const genres: Array<IGenre> = await Genre.find().select('name');
         const data = { genres };
         res.status(200).json(data);
     } catch (e) {
@@ -114,6 +109,12 @@ export const editGenre = async (req: Request, res: Response, next: NextFunction)
         const { name, symlinks } = req.body as GenreRequestBody;
 
         const genre = await Genre.findById(genreId);
+        if (!genre) {
+            const error : ResponseError = new Error('Genre not found');
+            error.code = 404;
+            throw error;
+        }
+
         genre.name = name;
         genre.symlinks = symlinks;
         genre.save();

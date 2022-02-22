@@ -52,6 +52,8 @@ jobs:
           MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
           MONGO_DEFAULT_ADMIN_USERNAME: ${{ secrets.MONGO_DEFAULT_ADMIN_USERNAME }}
           MONGO_DEFAULT_ADMIN_PASSWORD: ${{ secrets.MONGO_DEFAULT_ADMIN_PASSWORD }}
+          MONGO_BESTFESTDB_ROOT_USERNAME: ${{ secrets.MONGO_BESTFESTDB_ROOT_USERNAME }}
+          MONGO_BESTFESTDB_ROOT_PASSWORD: ${{ secrets.MONGO_BESTFESTDB_ROOT_PASSWORD }}
 
         with:
           args: cd ../home/ &&
@@ -64,6 +66,8 @@ jobs:
             export MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_INITDB_ROOT_PASSWORD }} &&
             export MONGO_DEFAULT_ADMIN_USERNAME=${{ secrets.MONGO_DEFAULT_ADMIN_USERNAME }} &&
             export MONGO_DEFAULT_ADMIN_PASSWORD=${{ secrets.MONGO_DEFAULT_ADMIN_PASSWORD }} &&
+            export MONGO_BESTFESTDB_ROOT_USERNAME=${{ secrets.MONGO_BESTFESTDB_ROOT_USERNAME }} &&
+            export MONGO_BESTFESTDB_ROOT_PASSWORD=${{ secrets.MONGO_BESTFESTDB_ROOT_PASSWORD }} &&
             sh ./devops/init-prod.sh
 
     needs: build

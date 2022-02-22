@@ -1,18 +1,20 @@
 import path from 'path';
 
 import express, { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 
-import config from './config/config';
+import config from './config';
 import artistRoutes from './routes/admin/artist';
 import festivalRoutes from './routes/admin/festival';
 import genreRoues from './routes/admin/genre';
 import authRoutes from './routes/admin/auth';
 import mainRoutes from './routes/main';
 import errorHandler from "./middlewares/errorHandler";
+import { dbConnect } from "./utils/dbConnect";
 
 const app = express();
+
+dbConnect();
 
 app.use(express.static(path.join(__dirname, '..', 'dist')));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -36,20 +38,12 @@ app.use('/api/app', mainRoutes);
 
 app.use(errorHandler);
 
-const isDocker = process.env.DOCKER;
-const mongoHost: string = isDocker ? config.database.host : 'localhost';
-const dbName: string = config.database.name;
-
 app.use((req, res, next) => {
     if (req.method !== 'GET') return next();
     if (req.xhr) return next();
     res.sendFile(path.join(__dirname, '/index.html'));
 })
 
-mongoose.connect(`mongodb://${mongoHost}:27017/${dbName}`)
-    .then(() => {
-        app.listen(3000, () => {
-            console.log('Server started successfully!');
-        });
-    })
-    .catch(err => console.log(err));
+app.listen(config.app.port, () => {
+    console.log(`Server started successfully on port: ${config.app.port}`)
+});

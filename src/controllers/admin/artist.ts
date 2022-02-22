@@ -6,7 +6,7 @@ import Genre from '../../models/genre';
 import { validationResult } from "express-validator";
 import formatValidationError from "../../utils/formatValidationError";
 import { countries, continents } from "countries-list";
-import searchByCountry from "../../utils/mongoose/searchByCountry";
+import searchByCountry from "../../utils/searchByCountry";
 import escapeStringRegexp from "../../utils/escapeRegExp";
 
 type ArtistRequestBody = {

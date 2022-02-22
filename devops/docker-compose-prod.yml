@@ -13,8 +13,6 @@ services:
       - html:/usr/share/nginx/html
       - certs:/etc/nginx/certs:ro
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - proxy-network
 
   acme-companion:
     image: nginxproxy/acme-companion
@@ -30,9 +28,7 @@ services:
       - acme:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      - NGINX_PROXY_CONTAINER=nginx-proxy
-    networks:
-      - proxy-network
+      NGINX_PROXY_CONTAINER: "nginx-proxy"
 
   nodejs:
     image: nodejs
@@ -42,11 +38,14 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DOCKER=true
-      - ENV=production
-      - VIRTUAL_HOST=bestfest.gordey.dev
-      - LETSENCRYPT_HOST=bestfest.gordey.dev
-      - VIRTUAL_PORT=3000
+      MONGO_INITDB_DATABASE: "bestfest"
+      MONGO_BESTFESTDB_ROOT_USERNAME: ${MONGO_BESTFESTDB_ROOT_USERNAME}
+      MONGO_BESTFESTDB_ROOT_PASSWORD: ${MONGO_BESTFESTDB_ROOT_PASSWORD}
+      DOCKER: "true"
+      ENV: "production"
+      VIRTUAL_HOST: "bestfest.gordey.dev"
+      LETSENCRYPT_HOST: "bestfest.gordey.dev"
+      VIRTUAL_PORT: "3000"
     depends_on:
       - mongo
 
@@ -55,9 +54,11 @@ services:
     container_name: mongo
     restart: always
     environment:
-      MONGO_INITDB_DATABASE: bestfest
+      MONGO_INITDB_DATABASE: "bestfest"
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_BESTFESTDB_ROOT_USERNAME: ${MONGO_BESTFESTDB_ROOT_USERNAME}
+      MONGO_BESTFESTDB_ROOT_PASSWORD: ${MONGO_BESTFESTDB_ROOT_PASSWORD}
       MONGO_DEFAULT_ADMIN_USERNAME: ${MONGO_DEFAULT_ADMIN_USERNAME}
       MONGO_DEFAULT_ADMIN_PASSWORD: ${MONGO_DEFAULT_ADMIN_PASSWORD}
     volumes:
@@ -80,8 +81,3 @@ volumes:
     driver: local
   acme:
     driver: local
-
-
-networks:
-  proxy-network:
-    driver: bridge
